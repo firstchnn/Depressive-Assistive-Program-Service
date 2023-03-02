@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3000;
 app.use(cors());
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
-const http = require('http');
+const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
@@ -82,20 +82,31 @@ io.on("connection", (socket) => {
 
 app.get("/", (req, res) => {
   res.status(200);
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + "/index.html");
 });
 
 app.get("/all-doctor", (req, res) => {
-    console.log("Getting alldoctor");
-    Doctors.find((err, val) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(val);
-        res.json(val);
-      }
-    });
+  console.log("Getting alldoctor");
+  Doctors.find((err, val) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(val);
+      res.json(val);
+    }
   });
+});
+
+app.get("/singleDoc/:id", function (req, res) {
+  const id = req.params.id;
+  Doctors.findById(id)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 server.listen(PORT, (error) => {
   if (!error)
@@ -104,5 +115,3 @@ server.listen(PORT, (error) => {
     );
   else console.log("Error occurred, server can't start", error);
 });
-
-
